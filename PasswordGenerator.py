@@ -14,7 +14,7 @@ A length between 8-16 characters is recommended:
     except ValueError:
         print("This is not a valid number, please try again.")
         time.sleep(2)
-        os.system('cls')
+        os.system('cls' if os.name == 'nt' else 'clear')
         continue
     
     while loopCode2 == True:
@@ -32,7 +32,7 @@ It is recommended to have a mix of character types in your password:
             print('''
 Something went wrong, please ensure you are entering a valid number.''')
             time.sleep(2)
-            os.system('cls')
+            os.system('cls' if os.name == 'nt' else 'clear')
             continue
     
         if userDecision == 1:
@@ -75,11 +75,11 @@ Something went wrong, please ensure you are entering a valid number.''')
             print('''
 Something went wrong, ensure you are entering a valid number.''')
             time.sleep(2)
-            os.system('cls')
+            os.system('cls' if os.name == 'nt' else 'clear')
 
     print("")
     input('''Press enter if you wish to generate another password.
 Alternatively, press close to exit the program.
 ''')
-    os.system('cls')
+    oos.system('cls' if os.name == 'nt' else 'clear')
 
