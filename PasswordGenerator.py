@@ -13,7 +13,7 @@ def generate_password(length, complexity):
     return password
 
 while True:
-    print("Password Generator v1.1")
+    print("Password Generator v2.0")
     while True:
         try:
             length = int(input("How many characters should be in your password? (8-16 characters): "))
