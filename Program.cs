@@ -1,110 +1,100 @@
-﻿//Password generator rewritten in C#
+﻿using System;
+using System.Linq;
 
-using System.Text;
-
-Console.ForegroundColor = ConsoleColor.Cyan;
-int passLength;
-int userDecision;
-Boolean loopCode0 = true;
-Boolean loopCode1 = true;
-
-const string lower = "abcdefghijklmnopqrstuvwxyz";
-const string upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-const string number = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-const string special = "!@#$%^&*_-=+1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-//constants
-//variables
-while (loopCode0 == true)
+public class Program
 {
-    loopCode1 = true;
-    Console.WriteLine(@"Password Generator
-Rewritten in C#
-    ");
-    //title
-    Console.WriteLine(@"How many characters should be in your password?
-A length between 8-16 characters is recommended:");
-
-    passLength = int.Parse(s: Console.ReadLine());
-
-
-    //password length decision
-    while (loopCode1 == true)
+    public static string GeneratePassword(int length, int complexity)
     {
-        Console.WriteLine(@"
-Please choose the complexity of the password.
-It's recommended to have a mix of character types in your password:");
-        //message before complexity option menu
-        Console.WriteLine(@"1. Only lowercase characters
-2. Lowercase and uppercase characters
-3. Lowercase/uppercase and numeric characters
-4. Lowercase/uppercase/numeric characters and symbols");
-        userDecision = int.Parse(s: Console.ReadLine());
-
-
-
-        switch (userDecision)
+        var charSets = new Dictionary<int, string>()
         {
-            case 1:
-                StringBuilder passBuilder0 = new StringBuilder();
-                Random rnd0 = new Random();
-                for (int i = 0; i < passLength; i++)
-                {
-                    int index = rnd0.Next(lower.Length);
-                    passBuilder0.Append(lower[index]);
-                }
-                loopCode1 = false;
-                Console.WriteLine(@"
-Your password is " + passBuilder0);
-                break;
-            case 2:
-                StringBuilder passBuilder1 = new StringBuilder();
-                Random rnd1 = new Random();
-                for (int i = 0; i < passLength; i++)
-                {
-                    int index = rnd1.Next(upper.Length);
-                    passBuilder1.Append(upper[index]);
-                }
-                loopCode1 = false;
-                Console.WriteLine(@"
-Your password is " + passBuilder1);
-                break;
-            case 3:
-                StringBuilder passBuilder2 = new StringBuilder();
-                Random rnd2 = new Random();
-                for (int i = 0; i < passLength; i++)
-                {
-                    int index = rnd2.Next(number.Length);
-                    passBuilder2.Append(number[index]);
-                }
-                loopCode1 = false;
-                Console.WriteLine(@"
-Your password is " + passBuilder2);
-                break;
-            case 4:
-                StringBuilder passBuilder3 = new StringBuilder();
-                Random rnd3 = new Random();
-                for (int i = 0; i < passLength; i++)
-                {
-                    int index = rnd3.Next(special.Length);
-                    passBuilder3.Append(special[index]);
-                }
-                loopCode1 = false;
-                Console.WriteLine(@"
-Your password is " + passBuilder3);
-                break;
-            default:
-                Console.WriteLine(@"
-That wasn't a valid option, please try again");
-                Console.WriteLine("Press enter to proceed.");
-                Console.ReadLine();
-                Console.Clear();
-                break;
-        }
+            { 1, "abcdefghijklmnopqrstuvwxyz" },
+            { 2, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" },
+            { 3, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" },
+            { 4, string.Concat(Enumerable.Range(32, 95).Select(i => (char)i)).Replace(" ", "") }
+        };
+
+        string charSet = charSets.ContainsKey(complexity) ? charSets[complexity] : charSets[1];
+
+        Random random = new Random();
+        string password = new string(Enumerable.Repeat(charSet, length).Select(s => s[random.Next(s.Length)]).ToArray());
+
+        return password;
     }
 
-    Console.WriteLine(@"
-Press enter if you want to generate another password.
-Alternatively, press close to exit the program.");
-    Console.ReadLine();
-    Console.Clear();
+    public static void Main()
+    {
+        Console.WriteLine("Password Generator v2.0");
+
+        while (true)
+        {
+            try
+            {
+                Console.Write("How many characters should be in your password? (8-16 characters): ");
+                int length = int.Parse(Console.ReadLine());
+
+                if (length >= 8 && length <= 16)
+                {
+                    while (true)
+                    {
+                        try
+                        {
+                            Console.WriteLine(@"Please choose the complexity of the password:
+1: Only lowercase
+2: Lowercase and uppercase
+3: Lowercase, uppercase, and numbers
+4: Lowercase, uppercase, numbers and symbols");
+
+                            int complexity = int.Parse(Console.ReadLine());
+
+                            if (complexity >= 1 && complexity <= 4)
+                            {
+                                string password = GeneratePassword(length, complexity);
+
+                                Console.WriteLine($"Your generated password is: {password}");
+
+                                while (true)
+                                {
+                                    Console.Write("Press enter or type 'close' to exit: ");
+                                    string choice = Console.ReadLine().Trim().ToLower();
+
+                                    if (choice == "close")
+                                    {
+                                        return;
+                                    }
+                                    else if (!string.IsNullOrEmpty(choice))
+                                    {
+                                        Console.WriteLine("Please press enter or type 'close'.");
+                                    }
+                                    else
+                                    {
+                                        break;
+                                    }
+                                }
+
+                                break;
+                            }
+                            else
+                            {
+                                Console.WriteLine("Please enter a valid number between 1 and 4.");
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            Console.WriteLine("Please enter a valid number between 1 and 4.");
+                        }
+                    }
+
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Please enter a valid number between 8 and 16.");
+                }
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Please enter a valid number between 8 and 16.");
+            }
+        }
+    }
 }
